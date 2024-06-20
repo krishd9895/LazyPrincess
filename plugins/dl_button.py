@@ -90,7 +90,7 @@ async def ddl_call_back(client, query):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    
+
     # Modify the code here:
     try:
         if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
@@ -111,25 +111,25 @@ async def ddl_call_back(client, query):
                 namee = "undefined"
             logger.info(f"File size: {sizee}, File name: {namee}")
     except Exception as e:
-        logger.error(f"Something went wrong in the code =>::: {e}")
+        logger.error(f"Error when fetching file size and name: {e}")
+        sizee = "undefined"
+        namee = "undefined"
 
     try:
         lazy_sticker = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
     except Exception as e:
-        await print(e)
-        pass
+        logger.error(f"Error when sending sticker: {e}")
 
     description = script.CUSTOM_CAPTION_UL_FILE
     start = datetime.now()
-    
-    description = script.CUSTOM_CAPTION_UL_FILE
+
     if "fulltitle" in response_json:
         description = response_json["fulltitle"][0:1021]
     tmp_directory_for_each_user = DOWNLOAD_LOCATION + "/" + str(query.from_user.id) + f'{random1}'
     if not os.path.isdir(tmp_directory_for_each_user):
         os.makedirs(tmp_directory_for_each_user)
     download_directory = tmp_directory_for_each_user + "/" + custom_file_name
-    command_to_exec = []
+
     async with aiohttp.ClientSession() as session:
         c_time = time.time()
         try:
@@ -148,6 +148,7 @@ async def ddl_call_back(client, query):
                 text=script.SLOW_URL_DECED,
             )
             return False
+
     if os.path.exists(download_directory):
         end_one = datetime.now()
         await query.edit_message_text(
@@ -158,7 +159,6 @@ async def ddl_call_back(client, query):
             file_size = os.stat(download_directory).st_size
         except FileNotFoundError as exc:
             download_directory = os.path.splitext(download_directory)[0] + "." + "mkv"
-            # https://stackoverflow.com/a/678242/4723940
             file_size = os.stat(download_directory).st_size
         if file_size > TG_MAX_FILE_SIZE:
             await query.edit_message_text(
@@ -172,8 +172,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker01 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
-                    pass
+                    logger.error(f"Error when sending sticker: {e}")
                 await client.send_document(
                     chat_id=query.message.chat.id,
                     document=download_directory,
@@ -195,8 +194,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker02 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
-                    pass
+                    logger.error(f"Error when sending sticker: {e}")
                 await client.send_video(
                     chat_id=query.message.chat.id,
                     video=download_directory,
@@ -222,8 +220,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker03 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
-                    pass
+                    logger.error(f"Error when sending sticker: {e}")
                 await client.send_audio(
                     chat_id=query.message.chat.id,
                     audio=download_directory,
@@ -247,8 +244,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker04 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
-                    pass
+                    logger.error(f"Error when sending sticker: {e}")
                 await client.send_video_note(
                     chat_id=query.message.chat.id,
                     video_note=download_directory,
@@ -270,8 +266,8 @@ async def ddl_call_back(client, query):
             try:
                 os.remove(download_directory)
                 os.remove(thumb_image_path)
-            except:
-                pass
+            except Exception as e:
+                logger.error(f"Error when removing files: {e}")
             time_taken_for_download = (end_one - start).seconds
             time_taken_for_upload = (end_two - end_one).seconds
             await query.edit_message_text(
