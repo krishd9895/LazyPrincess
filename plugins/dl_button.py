@@ -31,7 +31,7 @@ async def ddl_call_back(client, query):
     # logger.info(client)
     cb_data = query.data
     lzmsg = query.message.reply_to_message  # msg will be callback query
-    message_idx = lzmsg.id #getting id
+    message_idx = lzmsg.id  # getting id
     # youtube_dl extractors
     tg_send_type, youtube_dl_format, youtube_dl_ext, ranom = cb_data.split("|")
     print(cb_data)
@@ -90,22 +90,29 @@ async def ddl_call_back(client, query):
                 o = entity.offset
                 l = entity.length
                 youtube_dl_url = youtube_dl_url[o:o + l]
-    ######################## 
+    
+    # Modify the code here:
     try:
         if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url:
-            logger.info('cant define file size for youtube videos')
+            logger.info('Cannot define file size for YouTube videos')
+            sizee = "undefined"
+            namee = "undefined"
         else:
-            xLAZY_BAAPUx_d_size = requests.head(youtube_dl_url)    
-            xLAZY_BAAPUx_t_length = int(xLAZY_BAAPUx_d_size.headers.get("Content-Length", 0))
-            xLAZY_BAAPUx_path = urlparse(youtube_dl_url).path
-            xLAZY_BAAPUx_u_name = os.path.basename(xLAZY_BAAPUx_path)
-            total_length = humanbytes(xLAZY_BAAPUx_t_length)
-        logger.info(total_length)
-        sizee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else total_length
-        namee = "undefined" if "youtu" in youtube_dl_url or "youtube" in youtube_dl_url else xLAZY_BAAPUx_u_name
+            xLAZY_BAAPUx_d_size = requests.head(youtube_dl_url)
+            if 'Content-Length' in xLAZY_BAAPUx_d_size.headers:
+                xLAZY_BAAPUx_t_length = int(xLAZY_BAAPUx_d_size.headers['Content-Length'])
+                xLAZY_BAAPUx_path = urlparse(youtube_dl_url).path
+                xLAZY_BAAPUx_u_name = os.path.basename(xLAZY_BAAPUx_path)
+                total_length = humanbytes(xLAZY_BAAPUx_t_length)
+                sizee = total_length
+                namee = xLAZY_BAAPUx_u_name
+            else:
+                sizee = "undefined"
+                namee = "undefined"
+            logger.info(f"File size: {sizee}, File name: {namee}")
     except Exception as e:
         logger.error(f"Something went wrong in the code =>::: {e}")
-    ######################## 
+
     try:
         lazy_sticker = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
     except Exception as e:
@@ -165,7 +172,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker01 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id = query.message.chat.id, text=f"🥳")
+                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
                     pass
                 await client.send_document(
                     chat_id=query.message.chat.id,
@@ -182,15 +189,15 @@ async def ddl_call_back(client, query):
                 )
                 await lazy_sticker01.delete()
             else:
-                 width, height, duration = await Mdata01(download_directory)
-                 thumb_image_path = await Gthumb02(client, query, duration, download_directory)
-                 await lazy_sticker.delete()
-                 try:
-                     lazy_sticker02 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
-                 except Exception as e:
-                     await client.send_message(chat_id = query.message.chat.id, text=f"🥳")
-                     pass
-                 await client.send_video(
+                width, height, duration = await Mdata01(download_directory)
+                thumb_image_path = await Gthumb02(client, query, duration, download_directory)
+                await lazy_sticker.delete()
+                try:
+                    lazy_sticker02 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
+                except Exception as e:
+                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
+                    pass
+                await client.send_video(
                     chat_id=query.message.chat.id,
                     video=download_directory,
                     caption=f"**{custom_file_name}**\n\n🧬Data costs: `{sizee}`",
@@ -207,7 +214,7 @@ async def ddl_call_back(client, query):
                         start_time
                     )
                 )
-                 await lazy_sticker02.delete()
+                await lazy_sticker02.delete()
             if tg_send_type == "audio":
                 duration = await Mdata03(download_directory)
                 thumbnail = await Gthumb01(client, query)
@@ -215,7 +222,7 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker03 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id = query.message.chat.id, text=f"🥳")
+                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
                     pass
                 await client.send_audio(
                     chat_id=query.message.chat.id,
@@ -240,16 +247,16 @@ async def ddl_call_back(client, query):
                 try:
                     lazy_sticker04 = await query.message.reply_sticker(sticker=random.choice(lazystickerset))
                 except Exception as e:
-                    await client.send_message(chat_id = query.message.chat.id, text=f"🥳")
+                    await client.send_message(chat_id=query.message.chat.id, text=f"🥳")
                     pass
                 await client.send_video_note(
                     chat_id=query.message.chat.id,
                     video_note=download_directory,
                     duration=duration,
                     length=width,
-                    thuly_to_message_id=message_idx,
-                    promb=thumbnail,
-                    repgress=progress_for_pyrogram,
+                    thumb=thumbnail,
+                    reply_to_message_id=message_idx,
+                    progress=progress_for_pyrogram,
                     progress_args=(
                         script.LAZY_UPLOAD_START.format(custom_file_name),
                         query.message,
@@ -268,7 +275,7 @@ async def ddl_call_back(client, query):
             time_taken_for_download = (end_one - start).seconds
             time_taken_for_upload = (end_two - end_one).seconds
             await query.edit_message_text(
-                text=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload, youtube_dl_url, namee, custom_file_name, sizee ),
+                text=script.AFTER_SUCCESSFUL_UPLOAD_MSG_WITH_TS.format(time_taken_for_download, time_taken_for_upload, youtube_dl_url, namee, custom_file_name, sizee),
                 disable_web_page_preview=True
             )
     else:
