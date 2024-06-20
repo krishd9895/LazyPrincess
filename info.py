@@ -156,7 +156,7 @@ if SELF_DELETE == "True":
 
 # Download Tutorial Button #
 DOWNLOAD_TEXT_NAME = "📥 HOW TO DOWNLOAD 📥"
-DOWNLOAD_TEXT_URL = "https://t.me/"
+DOWNLOAD_TEXT_URL = "www.google.com"
 
 # Custom Caption Under Button #
 CAPTION_BUTTON = "Get Updates"
